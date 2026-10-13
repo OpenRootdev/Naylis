@@ -1,0 +1,83 @@
+{
+  "meta": {
+    "date": "2026-10-02T12:18:38",
+    "models": ["vanilla", "vanilla_thin_ffn", "naylis_graph_moe", "naylis_mom_fixed"],
+    "tasks_shots": {
+      "hellaswag": 0,
+      "arc_easy": 0,
+      "arc_challenge": 0,
+      "piqa": 0,
+      "boolq": 0,
+      "copa": 0,
+      "winogrande": 0,
+      "sciq": 0,
+      "openbookqa": 0,
+      "mmlu": 5
+    },
+    "batch_size": 8,
+    "device": "cuda",
+    "dtype": "float16",
+    "seed": 257,
+    "limit": null,
+    "tokenizer": "HuggingFaceTB/cosmo2-tokenizer",
+    "lm_eval_version": "0.4.13",
+    "checkpoints": {
+      "vanilla": "TheRealSkyline/naylis_ablation_300M (dataset) → {vanilla}/ (cache HF local, chemin non visible dans le log)",
+      "vanilla_thin_ffn": "TheRealSkyline/naylis_ablation_300M (dataset) → {vanilla_thin_ffn}/ (cache HF local, chemin non visible dans le log)",
+      "naylis_graph_moe": "/root/.cache/huggingface/hub/datasets--TheRealSkyline--naylis_ablation_300M/snapshots/fd80e5cc0ee24685300927fb7c1cb3f124aa99bb/naylis_graph_moe",
+      "naylis_mom_fixed": "naylis_mom_fixed_seed257/model_final/ (local d'abord, cf. bench_lm_eval_fixed.py) — benché par le run v2 du 02/10 (fix dtype OK)"
+    },
+    "liger": null,
+    "note": "Reconstruit depuis le log du run du 02/10 11:34-12:18 (Colab, python 3.13) : 3 variantes completes, naylis_mom_fixed avait crash (RuntimeError float != c10::Half dans MoMLayer._router_logits — cumsum fp32 du prefix-mean injecte dans des poids fp16 sans autocast). Corrige dans bench_lm_eval_fixed.py (v2, patch dtype + smoke forward). Averages verifiees vs tableau du log : vanilla 0.4627, thin 0.4554 (-0.0072), graph_moe 0.4642 (+0.0015). Colonne naylis_mom_fixed ajoutee depuis le tableau final du run v2 du 02/10 : fixed 0.4664 (+0.0037 vs vanilla, meilleur des 4 ; honnete > fuyard +0.0022)."
+  },
+  "results": {
+    "vanilla": {
+      "hellaswag": {"accuracy": 0.3612, "metric": "acc_norm"},
+      "arc_easy": {"accuracy": 0.4465, "metric": "acc_norm"},
+      "arc_challenge": {"accuracy": 0.291, "metric": "acc_norm"},
+      "piqa": {"accuracy": 0.6556, "metric": "acc_norm"},
+      "boolq": {"accuracy": 0.6217, "metric": "acc"},
+      "copa": {"accuracy": 0.64, "metric": "acc"},
+      "winogrande": {"accuracy": 0.5083, "metric": "acc"},
+      "sciq": {"accuracy": 0.525, "metric": "acc_norm"},
+      "openbookqa": {"accuracy": 0.334, "metric": "acc_norm"},
+      "mmlu": {"accuracy": 0.2433, "metric": "acc"}
+    },
+    "vanilla_thin_ffn": {
+      "hellaswag": {"accuracy": 0.344, "metric": "acc_norm"},
+      "arc_easy": {"accuracy": 0.4398, "metric": "acc_norm"},
+      "arc_challenge": {"accuracy": 0.279, "metric": "acc_norm"},
+      "piqa": {"accuracy": 0.6469, "metric": "acc_norm"},
+      "boolq": {"accuracy": 0.5786, "metric": "acc"},
+      "copa": {"accuracy": 0.64, "metric": "acc"},
+      "winogrande": {"accuracy": 0.5099, "metric": "acc"},
+      "sciq": {"accuracy": 0.529, "metric": "acc_norm"},
+      "openbookqa": {"accuracy": 0.33, "metric": "acc_norm"},
+      "mmlu": {"accuracy": 0.257, "metric": "acc"}
+    },
+    "naylis_graph_moe": {
+      "hellaswag": {"accuracy": 0.3386, "metric": "acc_norm"},
+      "arc_easy": {"accuracy": 0.4318, "metric": "acc_norm"},
+      "arc_challenge": {"accuracy": 0.2696, "metric": "acc_norm"},
+      "piqa": {"accuracy": 0.6447, "metric": "acc_norm"},
+      "boolq": {"accuracy": 0.6217, "metric": "acc"},
+      "copa": {"accuracy": 0.7, "metric": "acc"},
+      "winogrande": {"accuracy": 0.5075, "metric": "acc"},
+      "sciq": {"accuracy": 0.543, "metric": "acc_norm"},
+      "openbookqa": {"accuracy": 0.324, "metric": "acc_norm"},
+      "mmlu": {"accuracy": 0.2607, "metric": "acc"}
+    },
+    "naylis_mom_fixed": {
+      "hellaswag": {"accuracy": 0.3418, "metric": "acc_norm"},
+      "arc_easy": {"accuracy": 0.4533, "metric": "acc_norm"},
+      "arc_challenge": {"accuracy": 0.2782, "metric": "acc_norm"},
+      "piqa": {"accuracy": 0.6464, "metric": "acc_norm"},
+      "boolq": {"accuracy": 0.6162, "metric": "acc"},
+      "copa": {"accuracy": 0.64, "metric": "acc"},
+      "winogrande": {"accuracy": 0.5185, "metric": "acc"},
+      "sciq": {"accuracy": 0.588, "metric": "acc_norm"},
+      "openbookqa": {"accuracy": 0.326, "metric": "acc_norm"},
+      "mmlu": {"accuracy": 0.2557, "metric": "acc"}
+    }
+  }
+}

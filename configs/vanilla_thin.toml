@@ -1,0 +1,39 @@
+[arch]
+model_name = "llama-300m-thin"
+variant = "vanilla"
+tokenizer_name = "HuggingFaceTB/cosmo2-tokenizer"
+seq_len = 1024
+d_model = 1024
+n_layers = 20
+n_heads = 16
+intermediate_size = 1024
+
+[train]
+seed = 257
+batch_size = 16
+grad_accum = 2
+learning_rate = 3e-4
+lr_scheduler_type = "cosine"
+warmup_ratio = 0.05
+logging_steps = 10
+save_steps = 5000
+save_total_limit = 1
+total_tokens = 5_000_000_000
+checkpoint_interval_sec = 3600
+amp_dtype = "bf16"
+gradient_checkpointing = false
+use_liger = false
+tokens_per_step = 32768
+
+# Pinned numerics: bf16, box-independent — matched to the naylis arm.
+[precision]
+mode = "bf16"
+
+[data]
+hf_repo_id = "TheRealSkyline/5B_Tokens_Cosmopedia-V2"
+hf_filename = "pretrain_data_5B.bin"
+hf_repo_type = "dataset"
+
+[hub]
+repo_id = "TheRealSkyline/naylis_ablation_300M"
+repo_type = "dataset"

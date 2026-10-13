@@ -1,0 +1,68 @@
+[arch]
+model_name = "naylis-fp8bench-300m"
+variant = "naylis"
+tokenizer_name = "HuggingFaceTB/cosmo2-tokenizer"
+seq_len = 1024
+d_model = 1024
+n_layers = 20
+n_heads = 16
+intermediate_size = 1024
+
+[naylis]
+mem_size = 1024
+mom_block_size = 128
+mom_top_blocks = 2
+mom_router_rank = 32
+mom_aux_weight = 0.001
+# xla-only in the causal edition (CUDA raises: Triton gather kernels
+# retired with the per-sequence router; GPU runs use eager SDPA).
+# Kernel backend for the MoM read: false = eager SDPA (default, the
+# parity reference). true = XLA fused-shape path on TPU, or the
+# experimental Triton flash read on CUDA (bf16; validate with
+# tests/test_parity.py GPU sections + mom_kernels/probe.py first).
+use_kernel = false
+# Checkpoint the MoM read (+ attn/MLP) during training: ~3x less
+# activation memory, ~25-35% slower, exact recompute. Inert on TPU
+# (XLA rematerialises on its own).
+mom_grad_ckpt = false
+
+[train]
+seed = 257
+batch_size = 16
+grad_accum = 2
+learning_rate = 3e-4
+lr_scheduler_type = "cosine"
+warmup_ratio = 0.05
+logging_steps = 10
+save_steps = 5000
+save_total_limit = 1
+total_tokens = 100_000_000
+noise_anneal_cutoff_frac = 0.15
+checkpoint_interval_sec = 3600
+amp_dtype = "bf16"
+optimizer = "auto"
+tf32 = true
+torch_compile = false
+gradient_checkpointing = false
+use_liger = false
+mom_aux_normalize = false
+tokens_per_step = 32768
+
+# Pinned fp8: one named recipe on every box, fail-loud when transformer_engine
+# is missing (a bench arm must never silently fall back to bf16). Cross-backend
+# equivalent: backend = "torchao", recipe = "tensorwise" (same per-tensor
+# current-scaling class).
+[precision]
+mode = "fp8"
+backend = "te"
+recipe = "current"
+mom_qo = false
+
+[data]
+hf_repo_id = "TheRealSkyline/5B_Tokens_Cosmopedia-V2"
+hf_filename = "pretrain_data_5B.bin"
+hf_repo_type = "dataset"
+
+[hub]
+repo_id = "TheRealSkyline/naylis_ablation_300M"
+repo_type = "dataset"
